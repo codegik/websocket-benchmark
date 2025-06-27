@@ -185,9 +185,7 @@ async function startHttpTest() {
 
             const response = await fetch(`${API_BASE_URL}/api/echo`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
@@ -226,6 +224,7 @@ async function startHttpTest() {
                 const totalTime = performance.now() - httpTestStartTime;
                 httpTestInProgress = false;
                 httpTotalTestTime = totalTime;
+
                 updateStatus(`HTTP test completed in ${totalTime.toFixed(2)} ms`);
 
                 // Update summary and charts
@@ -333,6 +332,7 @@ async function startWebSocketTest() {
                         const totalTime = performance.now() - wsTestStartTime;
                         wsTestInProgress = false;
                         wsTotalTestTime = totalTime;
+
                         updateStatus(`WebSocket test completed in ${totalTime.toFixed(2)} ms`);
 
                         // Close WebSocket
