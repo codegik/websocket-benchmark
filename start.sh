@@ -5,14 +5,15 @@
 echo "Starting WebSocket Benchmark..."
 
 # Create a file to store PIDs
-echo "" > ./app_pids.txt
+PID_FILE="/tmp/websocket_benchmark_pids.txt"
+echo "" > $PID_FILE
 
 # Start the backend server
 echo "Starting backend server..."
 cd backend
 npm start &
 BACKEND_PID=$!
-echo $BACKEND_PID > ../app_pids.txt
+echo $BACKEND_PID > $PID_FILE
 cd ..
 
 # Wait a moment to make sure backend is fully started
@@ -23,7 +24,7 @@ echo "Starting frontend server..."
 cd frontend
 npm start &
 FRONTEND_PID=$!
-echo $FRONTEND_PID >> ../app_pids.txt
+echo $FRONTEND_PID >> $PID_FILE
 cd ..
 
 echo "Both applications started successfully!"

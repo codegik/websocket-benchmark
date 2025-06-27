@@ -2,6 +2,8 @@
 
 This project provides a comprehensive benchmarking tool to compare the performance of WebSocket and HTTP REST protocols in real-time applications.
 
+![ui.sample.png](images/ui.sample.png)
+
 ## Overview
 
 The benchmark measures and compares the latency and throughput characteristics of WebSocket and HTTP connections, helping developers make informed decisions about which protocol is more suitable for their specific use cases.
@@ -67,3 +69,17 @@ In most scenarios, WebSockets will show better performance for frequent small me
 - Timing is measured with microsecond precision using `performance.now()`
 - Tests can be configured to simulate different real-world scenarios
 - Results can be reset to run multiple test configurations
+
+# Results
+The results of the benchmark will vary based on network conditions, server load, and client capabilities. Generally, you can expect:
+
+All the payload sizes are 1000 bytes.
+
+## 1k Requests with 10 Concurrency
+![result.1000r.10t.png](images/result.1000r.10t.png)
+
+## 10k Requests with 10 Concurrency
+![result.10000r.10t.png](images/result.10000r.10t.png)
+
+## 100k Requests with 10 Concurrency
+![result.100000r.10t.png](images/result.100000r.10t.png)

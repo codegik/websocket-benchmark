@@ -3,15 +3,16 @@
 # Script to stop both backend and frontend applications for WebSocket Benchmark
 
 echo "Stopping WebSocket Benchmark..."
+PID_FILE="/tmp/websocket_benchmark_pids.txt"
 
 # Check if PID file exists
-if [ ! -f "./app_pids.txt" ]; then
+if [ ! -f "$PID_FILE" ]; then
     echo "PID file not found. Applications may not be running."
     exit 1
 fi
 
 # Read PIDs from file
-PIDS=$(cat ./app_pids.txt)
+PIDS=$(cat $PID_FILE)
 if [ -z "$PIDS" ]; then
     echo "No PIDs found in file. Applications may not be running."
     exit 1
@@ -28,6 +29,6 @@ for PID in $PIDS; do
 done
 
 # Clear the PID file
-rm ./app_pids.txt
+rm $PID_FILE
 
 echo "Applications stopped successfully!"
