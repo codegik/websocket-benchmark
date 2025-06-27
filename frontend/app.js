@@ -10,6 +10,8 @@ let wsTestInProgress = false;
 let webSocket = null;
 let httpTestStartTime = 0;
 let wsTestStartTime = 0;
+let httpTotalTestTime = 0;
+let wsTotalTestTime = 0;
 let durationChart = null;
 let distributionChart = null;
 
@@ -172,9 +174,6 @@ async function startHttpTest() {
 
     updateStatus(`Starting HTTP test with ${numRequests} requests, ${payloadSize} bytes payload, ${concurrentRequests} concurrent requests`);
 
-    // Generate payload
-    const payload = { data: generateRandomPayload(payloadSize) };
-
     // Track completed requests
     let completedRequests = 0;
 
@@ -182,6 +181,7 @@ async function startHttpTest() {
     async function sendHttpRequest(index) {
         try {
             const startTime = performance.now();
+            const payload = { data: generateRandomPayload(payloadSize) };
 
             const response = await fetch(`${API_BASE_URL}/api/echo`, {
                 method: 'POST',
@@ -225,10 +225,12 @@ async function startHttpTest() {
             if (completedRequests === numRequests) {
                 const totalTime = performance.now() - httpTestStartTime;
                 httpTestInProgress = false;
+                httpTotalTestTime = totalTime;
                 updateStatus(`HTTP test completed in ${totalTime.toFixed(2)} ms`);
 
                 // Update summary and charts
                 updateHttpSummary();
+                updateComparisonSummary();
                 updateCharts();
             }
         } catch (error) {
@@ -271,9 +273,6 @@ async function startWebSocketTest() {
     updateProgressBar('ws', 0);
 
     updateStatus(`Starting WebSocket test with ${numRequests} requests, ${payloadSize} bytes payload`);
-
-    // Generate payload
-    const payload = generateRandomPayload(payloadSize);
 
     // Connect to WebSocket server
     return new Promise((resolve) => {
@@ -333,6 +332,7 @@ async function startWebSocketTest() {
                     if (completedRequests === numRequests) {
                         const totalTime = performance.now() - wsTestStartTime;
                         wsTestInProgress = false;
+                        wsTotalTestTime = totalTime;
                         updateStatus(`WebSocket test completed in ${totalTime.toFixed(2)} ms`);
 
                         // Close WebSocket
@@ -352,6 +352,7 @@ async function startWebSocketTest() {
                 const batchSize = Math.min(concurrentRequests, numRequests - i);
 
                 for (let j = 0; j < batchSize; j++) {
+                    const payload = generateRandomPayload(payloadSize);
                     const index = i + j;
                     const prefixedPayload = `${index}:${payload}`;
                     requestTimestamps[index] = performance.now();
@@ -417,6 +418,7 @@ function updateHttpSummary() {
     const maxDuration = Math.max(...durations);
 
     document.getElementById('http-total-requests').textContent = httpTestResults.length;
+    document.getElementById('http-total-test-complete').textContent = `${httpTotalTestTime.toFixed(2)} ms`;
     document.getElementById('http-avg-duration').textContent = `${avgDuration.toFixed(2)} ms`;
     document.getElementById('http-min-duration').textContent = `${minDuration.toFixed(2)} ms`;
     document.getElementById('http-max-duration').textContent = `${maxDuration.toFixed(2)} ms`;
@@ -432,6 +434,7 @@ function updateWsSummary() {
     const maxDuration = Math.max(...durations);
 
     document.getElementById('ws-total-requests').textContent = wsTestResults.length;
+    document.getElementById('ws-total-test-complete').textContent = `${wsTotalTestTime.toFixed(2)} ms`;
     document.getElementById('ws-avg-duration').textContent = `${avgDuration.toFixed(2)} ms`;
     document.getElementById('ws-min-duration').textContent = `${minDuration.toFixed(2)} ms`;
     document.getElementById('ws-max-duration').textContent = `${maxDuration.toFixed(2)} ms`;
@@ -572,17 +575,21 @@ async function resetMetrics() {
         // Clear local results
         httpTestResults = [];
         wsTestResults = [];
+        httpTotalTestTime = 0;
+        wsTotalTestTime = 0;
 
         // Update UI
         document.getElementById('http-details-table').querySelector('tbody').innerHTML = '';
         document.getElementById('ws-details-table').querySelector('tbody').innerHTML = '';
 
         document.getElementById('http-total-requests').textContent = '0';
+        document.getElementById('http-total-test-complete').textContent = '0 ms';
         document.getElementById('http-avg-duration').textContent = '0 ms';
         document.getElementById('http-min-duration').textContent = '0 ms';
         document.getElementById('http-max-duration').textContent = '0 ms';
 
         document.getElementById('ws-total-requests').textContent = '0';
+        document.getElementById('ws-total-test-complete').textContent = '0 ms';
         document.getElementById('ws-avg-duration').textContent = '0 ms';
         document.getElementById('ws-min-duration').textContent = '0 ms';
         document.getElementById('ws-max-duration').textContent = '0 ms';

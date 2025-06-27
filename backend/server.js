@@ -34,6 +34,8 @@ const wsRequestDurationHistogram = new promClient.Histogram({
   registers: [register]
 });
 
+
+
 // Store metrics for comparison
 let httpMetrics = [];
 let wsMetrics = [];
@@ -64,9 +66,11 @@ wss.on('connection', (ws) => {
 
   ws.on('message', (message) => {
     const start = performance.now();
+    const data = message.toString();
+    const messageId = data.split(":")[0];
 
     // Echo back the message
-    ws.send(message);
+    ws.send(data);
 
     const duration = performance.now() - start;
     wsRequestDurationHistogram.observe(duration);
@@ -77,7 +81,6 @@ wss.on('connection', (ws) => {
       duration: duration,
       payload: message.length
     });
-    console.log(`Received message: ${message.id}, Duration: ${duration}ms`);
   });
 
   ws.on('close', () => {
@@ -133,3 +136,4 @@ server.listen(PORT, () => {
   console.log(`Metrics endpoint: http://localhost:${PORT}/metrics`);
   console.log(`Comparison endpoint: http://localhost:${PORT}/api/comparison`);
 });
+

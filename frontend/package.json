@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "Frontend for WebSocket vs HTTP performance comparison",
   "scripts": {
-    "start": "serve -s ."
+    "start": "serve -s . -p 4000"
   },
   "dependencies": {
     "serve": "^14.2.0"
   }
 }
-
