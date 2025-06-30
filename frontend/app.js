@@ -579,26 +579,6 @@ function updateComparisonSummary() {
 
     if (!hasHttpResults && !hasHttp2Results && !hasWsResults) return;
 
-    // Set the number of requests (should be the same for all protocols)
-    let numRequests = 0;
-    if (hasHttpResults) numRequests = httpTestResults.length;
-    else if (hasHttp2Results) numRequests = http2TestResults.length;
-    else if (hasWsResults) numRequests = wsTestResults.length;
-
-    document.getElementById('table-total-requests').textContent = numRequests;
-
-    // Set HTTP total duration
-    const httpDuration = hasHttpResults ? `${httpTotalTestTime.toFixed(2)} ms` : '-';
-    document.getElementById('table-http-total-duration').textContent = httpDuration;
-
-    // Set HTTP/2 total duration
-    const http2Duration = hasHttp2Results ? `${http2TotalTestTime.toFixed(2)} ms` : '-';
-    document.getElementById('table-http2-total-duration').textContent = http2Duration;
-
-    // Set WebSocket total duration
-    const wsDuration = hasWsResults ? `${wsTotalTestTime.toFixed(2)} ms` : '-';
-    document.getElementById('table-ws-total-duration').textContent = wsDuration;
-
     // Determine the winner based on total duration
     let winner = '-';
     let bestTotalDuration = Infinity;
@@ -616,18 +596,6 @@ function updateComparisonSummary() {
     if (hasWsResults && wsTotalTestTime < bestTotalDuration) {
         bestTotalDuration = wsTotalTestTime;
         winner = 'WebSocket';
-    }
-
-    // Update the winner cell
-    document.getElementById('protocol-winner').textContent = winner;
-
-    // Automatically switch to the comparison tab after completing all tests
-    if (hasHttpResults && hasHttp2Results && hasWsResults) {
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            if (btn.dataset.tab === 'comparison') {
-                btn.click();
-            }
-        });
     }
 
     // Highlight the winner card and show badge
