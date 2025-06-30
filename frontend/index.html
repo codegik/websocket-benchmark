@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket vs HTTP Benchmark</title>
+    <title>WebSocket vs HTTP vs HTTP/2 Benchmark</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>WebSocket vs HTTP REST Benchmark</h1>
+        <h1>WebSocket vs HTTP vs HTTP/2 Benchmark</h1>
 
         <div class="control-panel">
             <div class="form-group">
@@ -25,8 +25,9 @@
             </div>
             <div class="button-group">
                 <button id="start-http-test" class="primary-btn">Start HTTP Test</button>
+                <button id="start-http2-test" class="primary-btn">Start HTTP/2 Test</button>
                 <button id="start-ws-test" class="primary-btn">Start WebSocket Test</button>
-                <button id="start-both-tests" class="primary-btn">Run Both Tests</button>
+                <button id="start-all-tests" class="primary-btn">Run All Tests</button>
                 <button id="reset-metrics" class="secondary-btn">Reset Metrics</button>
             </div>
         </div>
@@ -35,6 +36,7 @@
             <div class="results-tabs">
                 <button class="tab-btn active" data-tab="summary">Summary</button>
                 <button class="tab-btn" data-tab="http-details">HTTP Details</button>
+                <button class="tab-btn" data-tab="http2-details">HTTP/2 Details</button>
                 <button class="tab-btn" data-tab="ws-details">WebSocket Details</button>
                 <button class="tab-btn" data-tab="charts">Charts</button>
             </div>
@@ -42,7 +44,8 @@
             <div class="tab-content">
                 <div id="summary" class="tab-pane active">
                     <div class="summary-cards">
-                        <div class="card">
+                        <div class="card" id="http-card">
+                            <div class="winner-badge" id="http-winner-badge">Winner</div>
                             <h3>HTTP REST</h3>
                             <div class="metric">
                                 <span class="label">Total Requests:</span>
@@ -66,7 +69,33 @@
                             </div>
                         </div>
 
-                        <div class="card">
+                        <div class="card" id="http2-card">
+                            <div class="winner-badge" id="http2-winner-badge">Winner</div>
+                            <h3>HTTP/2</h3>
+                            <div class="metric">
+                                <span class="label">Total Requests:</span>
+                                <span id="http2-total-requests" class="value">0</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Total Test Complete:</span>
+                                <span id="http2-total-test-complete" class="value">0 ms</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Average Duration:</span>
+                                <span id="http2-avg-duration" class="value">0 ms</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Min Duration:</span>
+                                <span id="http2-min-duration" class="value">0 ms</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Max Duration:</span>
+                                <span id="http2-max-duration" class="value">0 ms</span>
+                            </div>
+                        </div>
+
+                        <div class="card" id="ws-card">
+                            <div class="winner-badge" id="ws-winner-badge">Winner</div>
                             <h3>WebSocket</h3>
                             <div class="metric">
                                 <span class="label">Total Requests:</span>
@@ -89,22 +118,6 @@
                                 <span id="ws-max-duration" class="value">0 ms</span>
                             </div>
                         </div>
-
-                        <div class="card comparison-card">
-                            <h3>Comparison</h3>
-                            <div class="metric">
-                                <span class="label">Performance Difference:</span>
-                                <span id="performance-diff" class="value">-</span>
-                            </div>
-                            <div class="metric">
-                                <span class="label">Faster Protocol:</span>
-                                <span id="faster-protocol" class="value">-</span>
-                            </div>
-                            <div class="metric">
-                                <span class="label">Speed Improvement:</span>
-                                <span id="speed-improvement" class="value">-</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -116,6 +129,27 @@
                     </div>
                     <div class="table-container">
                         <table id="http-details-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Timestamp</th>
+                                    <th>Duration (ms)</th>
+                                    <th>Payload Size</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="http2-details" class="tab-pane">
+                    <h3>HTTP/2 Request Details</h3>
+                    <div class="progress-container">
+                        <div id="http2-progress-bar" class="progress-bar"></div>
+                        <div id="http2-progress-text" class="progress-text">0%</div>
+                    </div>
+                    <div class="table-container">
+                        <table id="http2-details-table">
                             <thead>
                                 <tr>
                                     <th>#</th>
