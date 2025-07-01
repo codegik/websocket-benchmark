@@ -1,6 +1,6 @@
 // Configuration
-const API_BASE_URL = 'http://localhost:3000';
-const HTTP2_BASE_URL = 'http://localhost:3001';
+const HTTP1_BASE_URL = 'http://localhost:3000';
+const HTTP2_BASE_URL = 'https://localhost:3001';
 const WS_URL = 'ws://localhost:3000';
 
 // State variables
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('start-http-test').addEventListener('click', startHttpTest);
     document.getElementById('start-http2-test').addEventListener('click', startHttp2Test);
     document.getElementById('start-ws-test').addEventListener('click', startWebSocketTest);
-    document.getElementById('start-all-tests').addEventListener('click', startBothTests);
+    document.getElementById('start-all-tests').addEventListener('click', startAllTests);
     document.getElementById('reset-metrics').addEventListener('click', resetMetrics);
 
     // Initialize charts
@@ -198,7 +198,7 @@ async function startHttpTest() {
             const startTime = performance.now();
             const payload = { data: generateRandomPayload(payloadSize) };
 
-            const response = await fetch(`${API_BASE_URL}/api/echo`, {
+            const response = await fetch(`${HTTP1_BASE_URL}/api/echo`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -300,7 +300,8 @@ async function startHttp2Test() {
             const response = await fetch(`${HTTP2_BASE_URL}/api/echo`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                cache: 'no-store',
             });
 
             await response.json();
@@ -498,7 +499,7 @@ async function startWebSocketTest() {
 }
 
 // Run both tests sequentially
-async function startBothTests() {
+async function startAllTests() {
     // Switch to Summary tab
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
@@ -655,7 +656,7 @@ function updateCharts() {
 // Fetch comparison data from the server
 async function fetchComparisonData() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/comparison`);
+        const response = await fetch(`${HTTP1_BASE_URL}/api/comparison`);
         const data = await response.json();
 
         // Update HTTP metrics if available
@@ -755,7 +756,7 @@ async function fetchComparisonData() {
 // Reset metrics
 async function resetMetrics() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/reset`, {
+        const response = await fetch(`${HTTP1_BASE_URL}/api/reset`, {
             method: 'POST'
         });
 
